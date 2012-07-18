@@ -11,7 +11,6 @@ import org.apache.commons.lang.time.DateUtils;
 import edu.fortlewis.portlet.ClassifiedsPortlet.domain.Category;
 @Entity
 @Table(name="FLC_ADS")
-
 public class Ad  implements Serializable
 {
 	
@@ -20,6 +19,7 @@ public class Ad  implements Serializable
 	private Category category;
 
 	private String userid;
+        private String useremail;
 	private Date createDate = new Date() ;
 	private Date startDate = new Date();
 
@@ -98,6 +98,12 @@ public class Ad  implements Serializable
 	{
 		this.userid = userid;
 	}
+        public String getUserEmail() {
+            return useremail;
+        }
+        public void setUserEmail(String useremail) {
+            this.useremail = useremail;
+        }
 	public int getStatus() 
 	{
 		return this.status;

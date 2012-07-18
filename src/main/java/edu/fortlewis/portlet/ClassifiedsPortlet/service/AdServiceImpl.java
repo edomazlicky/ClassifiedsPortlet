@@ -1,10 +1,8 @@
 package edu.fortlewis.portlet.ClassifiedsPortlet.service;
 
 import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import edu.fortlewis.portlet.ClassifiedsPortlet.domain.Ad;
-import edu.fortlewis.portlet.ClassifiedsPortlet.web.EditHeadingController;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,12 +10,18 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
-import java.sql.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AdServiceImpl extends HibernateDaoSupport implements AdService{
 	private static Log log = LogFactory.getLog(AdServiceImpl.class);
-	
+
+        @Autowired
+        private EmailNotification email_notification;
+
+        public void setEmail_notification(EmailNotification email_notification) {
+            this.email_notification = email_notification;
+        }
+
 	public void deleteExpiredAds() {
 		List<Ad> result = null;
 		
@@ -34,8 +38,9 @@ public class AdServiceImpl extends HibernateDaoSupport implements AdService{
 			log.info("Ad groomer Deleting "+result.size()+" expired ads.");
 			
 			try {
-				for (Ad a: result) {
-					getHibernateTemplate().delete(a);
+				for (Ad ad: result) {
+                                        email_notification.SendAdExpireNotification(ad);
+					getHibernateTemplate().delete(ad);
 				}
 				getHibernateTemplate().flush();
 			} catch (HibernateException ex) {
@@ -103,6 +108,8 @@ public class AdServiceImpl extends HibernateDaoSupport implements AdService{
 		try {
 			getHibernateTemplate().saveOrUpdate(ad);
 			getHibernateTemplate().flush();
+                        email_notification.SendAdSubmitNotification(ad);
+                        email_notification.SendAdminSubmitNotification(ad);
 		} catch (HibernateException ex) {
 			throw convertHibernateAccessException(ex);
 		}

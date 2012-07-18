@@ -31,10 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.portlet.bind.PortletRequestDataBinder;
 import edu.fortlewis.portlet.ClassifiedsPortlet.domain.CategoryEditor;
+import edu.fortlewis.portlet.ClassifiedsPortlet.domain.PortletUserPropertiesResolver;
 import edu.fortlewis.portlet.ClassifiedsPortlet.service.ConfigService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.InitBinder;
 import edu.fortlewis.portlet.ClassifiedsPortlet.domain.SubmitAdFormValidator;
+import edu.fortlewis.portlet.ClassifiedsPortlet.domain.UserProperties;
 /**
  * SubmitAdFormController allows a user to create or modify an Ad.
  */
@@ -52,6 +54,9 @@ public class SubmitAdFormController {
 
 	@Autowired 
 	private CategoryService categoryService = null;
+
+        @Autowired
+        private PortletUserPropertiesResolver userPropertiesResolver = null;
 
 	@RequestMapping(params="action=addAd")
 	public String setupForm(
@@ -116,7 +121,9 @@ public class SubmitAdFormController {
 	    if (!result.hasErrors() && ad != null){
 	    	
 	    		if (request.getRemoteUser() != null) {
+                                UserProperties user = userPropertiesResolver.getProperties(request);
 	    			ad.setUserid(request.getRemoteUser());
+                                ad.setUserEmail(user.getUseremail());
 	    			ad.setStatus(0);
 	    			adService.processAd(ad);
 	    		}

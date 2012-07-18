@@ -25,7 +25,23 @@
 		</property>
 	</bean>
 	
-	
+	<!-- Mail service for sending notification e-mails to admin and users -->
+        <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+            <property name="host" value="your.smtphost.com"/>
+            <property name="port" value="25"/>
+            <property name="username" value="yourusername"/>
+            <property name="password" value="yourpassword"/>
+            <property name="javaMailProperties">
+                <props>
+                    <!-- Use SMTP-AUTH to authenticate to SMTP server -->
+                    <prop key="mail.smtp.auth">true</prop>
+                    <!-- Use TLS to encrypt communication with SMTP server -->
+                    <prop key="mail.smtp.starttls.enable">true</prop>
+                </props>
+            </property>
+        </bean>
+
+
     <!-- 
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName">
